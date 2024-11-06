@@ -1,37 +1,41 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { useEffect } from "react";
+import { Slot, useRouter, useSegments } from "expo-router";
+import { AuthProvider } from "../contexts/AuthContext";
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
+import "../styles/global.css";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "react-native";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const InitialLayout = () => {
+    const { isLoading, isAuthenticated } = useAuth();
+    const segments = useSegments();
+    const router = useRouter();
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+    useEffect(() => {
+        if (!isLoading) return;
+
+        const inAuthGroup = segments[0] === "(auth)";
+
+        if (isAuthenticated && !inAuthGroup) {
+            router.replace("/home");
+        } else if (!isAuthenticated) {
+            router.replace("/login");
+        }
+    }, [isAuthenticated]);
+
+    return (
+        <SafeAreaView className="flex-1 bg-primary-300">
+            <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+            <Slot />
+        </SafeAreaView>
+    );
+};
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
-  );
-}
+    return (
+        <AuthProvider>
+            <InitialLayout />
+        </AuthProvider>
+    );
+};
