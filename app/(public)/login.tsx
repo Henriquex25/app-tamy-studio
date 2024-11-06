@@ -6,43 +6,43 @@ import { Link } from 'expo-router';
 
 export default function Login() {
     return (
-        <View className="px-4 pt-7 bg-primary-300 flex-1">
+        <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8 ">
             {/* Logo */}
-            <View className="flex w-full">
-                <Image source={require("../../assets/images/logo.png")} className="w-32 h-32 self-center" />
+            <View className="flex w-full -mt-5">
+                <Image source={require("../../assets/images/logo.png")} className="w-40 h-40 self-center" />
             </View>
 
             {/* Form */}
-            <View className="mt-12">
+            <View className="mt-16 w-full">
                 {/* Email */}
                 <View>
                     <Input label="Usuário" keyboardType="email-address" textContentType="emailAddress" />
                 </View>
 
                 {/* Password */}
-                <View className="mt-7">
+                <View className="mt-8">
                     <Input label="Senha" secureTextEntry />
                 </View>
 
                 {/* Esqueci minha senha */}
                 <View>
-                    <Link href="/forgot-password" className="text-sm text-right pr-2 text-pink-600 mt-3.5">
+                    <Link href="/forgot-password" className="text-sm text-right pr-2 text-pink-500 mt-4">
                         Esqueci minha senha
                     </Link>
                 </View>
             </View>
 
             {/* Botões */}
-            <View className="mt-10">
+            <View className="mt-10 w-full">
                 {/* Entrar */}
-                <TouchableOpacity className="w-full bg-pink-400 py-2.5 rounded-3xl" activeOpacity={0.7}>
+                <TouchableOpacity className="w-full bg-pink-400 py-3 rounded-3xl" activeOpacity={0.7}>
                     <Text className="text-center font-bold text-xl text-gray-800">Entrar</Text>
                 </TouchableOpacity>
 
                 {/* Cadastrar */}
                 <Link href="/register" asChild>
-                    <TouchableOpacity className="mt-4 w-full py-2.5 rounded-3xl" activeOpacity={0.7}>
-                        <Text className="text-center font-bold text-lg text-pink-600">Cadastrar</Text>
+                    <TouchableOpacity className="mt-4 w-full py-3 rounded-3xl" activeOpacity={0.7}>
+                        <Text className="text-center font-bold text-lg text-pink-500">Cadastrar</Text>
                     </TouchableOpacity>
                 </Link>
 
