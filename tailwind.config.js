@@ -1,4 +1,5 @@
 const colors = require("tailwindcss/colors");
+const themeColors = require("./styles/themeColors");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -8,12 +9,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: colors.pink,
-                default: {
-                    1: "#2a2a2e",
-                    2: "#313136",
-                    3: "#3a3a40",
-                },
+                primary: themeColors.primary,
+                default: themeColors.darkMode,
             },
         },
     },

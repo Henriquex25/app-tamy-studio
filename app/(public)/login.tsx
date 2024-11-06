@@ -6,7 +6,7 @@ import { Link } from 'expo-router';
 
 export default function Login() {
     return (
-        <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8 ">
+        <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8">
             {/* Logo */}
             <View className="flex w-full -mt-5">
                 <Image source={require("../../assets/images/logo.png")} className="w-40 h-40 self-center" />
