@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import api from "../services/api";
@@ -47,13 +46,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = async () => {
         try {
-            await api.post("/logout");
-            await SecureStore.deleteItemAsync("authToken");
+            const response = await api.post("/logout");
+
+            if (response.status === 200) {
+                await SecureStore.deleteItemAsync("authToken");
+            }
 
             setIsAuthenticated(false);
             router.replace("/(public)/login");
         } catch (error) {
-            console.error("Erro no logout:", error);
+            console.error("Erro durante o logout:", error);
         }
     };
 

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image } from 'react-native'
-import { Input } from '../../components/form/input/index';
-import { Link } from 'expo-router';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, Image } from "react-native";
+import { Input } from "../../components/form/input/index";
+import { Link } from "expo-router";
 import { useAuth } from "../../contexts/AuthContext";
 
 export default function LoginScreen() {
-    const { login } = useAuth();
+    const { login, isLoading } = useAuth();
     const [email, setEmail] = useState("test@example.com");
-    const [password, setPassword] = useState('password');
+    const [password, setPassword] = useState("password");
 
     const handleLogin = async () => {
         await login(email, password);
