@@ -1,6 +1,8 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
+import api from "../services/api";
+import { router } from "expo-router";
 
 interface AuthContextData {
     isAuthenticated: boolean;
@@ -18,41 +20,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const checkToken = async () => {
             const token = await SecureStore.getItemAsync("authToken");
+
             if (token) {
                 setIsAuthenticated(true);
             }
-            setIsLoading(false); // Carregamento concluído
+
+            setIsLoading(false);
         };
+
         checkToken();
     }, []);
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await fetch("https://sua-api.com/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await api.post("/login", { email, password });
 
-            if (!response.ok) {
-                throw new Error("Falha na autenticação");
-            }
+            await SecureStore.setItemAsync("authToken", response.data.token);
 
-            const data = await response.json();
-            const token = data.token;
-
-            await SecureStore.setItemAsync("authToken", token);
             setIsAuthenticated(true);
+
+            router.replace("/(auth)/(tabs)/home");
         } catch (error) {
-            console.error("Erro de login:", error);
+            console.error("Erro no login:", error);
         }
     };
 
     const logout = async () => {
-        await SecureStore.deleteItemAsync("authToken");
-        setIsAuthenticated(false);
+        try {
+            await api.post("/logout");
+            await SecureStore.deleteItemAsync("authToken");
+
+            setIsAuthenticated(false);
+            router.replace("/(public)/login");
+        } catch (error) {
+            console.error("Erro no logout:", error);
+        }
     };
 
     return (
@@ -62,8 +64,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
+
     if (!context) {
         throw new Error("useAuth deve ser usado dentro do AuthProvider");
     }
+
     return context;
 };

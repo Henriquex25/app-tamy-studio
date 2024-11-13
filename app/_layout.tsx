@@ -5,11 +5,23 @@ import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar, Text } from "react-native";
+import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import themeColors from "@/styles/themeColors";
+import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
 
 SplashScreen.preventAutoHideAsync();
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        primary: themeColors.primary[500],
+        secondary: themeColors.secondary[500],
+        background: themeColors.primary[300],
+    },
+};
 
 const InitialLayout = () => {
     const { isLoading, isAuthenticated } = useAuth();
@@ -29,19 +41,12 @@ const InitialLayout = () => {
 
         const inAuthGroup = segments[0] === "(auth)";
 
-        console.log("Primeiro seguimento: ", segments[0]);
-        console.log("inAuthGroup: ", inAuthGroup);
-        console.log("Verificação 1: ", true && !inAuthGroup);
-        console.log("Verificação 2: ", !false);
-
-        // if (isAuthenticated && !inAuthGroup) {
-        if (true && !inAuthGroup) {
+        if (isAuthenticated && !inAuthGroup) {
             router.replace("/(auth)/(tabs)/home");
-        // } else if (!isAuthenticated) {
-        } else if (!true) {
+        } else if (!isAuthenticated) {
             router.replace("/login");
         }
-    }, [fontsLoaded, isAuthenticated]);
+    }, [fontsLoaded, isAuthenticated, isLoading]);
 
     if (!fontsLoaded || isLoading) {
         return null;
@@ -49,8 +54,10 @@ const InitialLayout = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-primary-300">
-            <StatusBar backgroundColor="transparent" barStyle="dark-content" />
-            <Slot />
+            <StatusBar barStyle="dark-content"  backgroundColor={themeColors.primary[300]}/>
+            <PaperProvider theme={theme}>
+                <Slot />
+            </PaperProvider>
         </SafeAreaView>
     );
 };

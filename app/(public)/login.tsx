@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { Input } from '../../components/form/input/index';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
+import { useAuth } from "../../contexts/AuthContext";
 
-export default function Login() {
+export default function LoginScreen() {
+    const { login } = useAuth();
+    const [email, setEmail] = useState("test@example.com");
+    const [password, setPassword] = useState('password');
+
+    const handleLogin = async () => {
+        await login(email, password);
+    };
+
     return (
         <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8">
             {/* Logo */}
@@ -16,12 +24,18 @@ export default function Login() {
             <View className="mt-16 w-full">
                 {/* Email */}
                 <View>
-                    <Input label="Usuário" keyboardType="email-address" textContentType="emailAddress" />
+                    <Input
+                        label="Email"
+                        keyboardType="email-address"
+                        textContentType="emailAddress"
+                        onChangeText={setEmail}
+                        value={email}
+                    />
                 </View>
 
                 {/* Password */}
                 <View className="mt-8">
-                    <Input label="Senha" secureTextEntry />
+                    <Input label="Senha" value={password} secureTextEntry onChangeText={setPassword} />
                 </View>
 
                 {/* Esqueci minha senha */}
@@ -35,7 +49,11 @@ export default function Login() {
             {/* Botões */}
             <View className="mt-10 w-full">
                 {/* Entrar */}
-                <TouchableOpacity className="w-full bg-pink-400 py-3 rounded-3xl" activeOpacity={0.7}>
+                <TouchableOpacity
+                    className="w-full bg-pink-400 py-3 rounded-3xl"
+                    activeOpacity={0.7}
+                    onPress={handleLogin}
+                >
                     <Text className="text-center font-bold text-xl text-gray-800">Entrar</Text>
                 </TouchableOpacity>
 
