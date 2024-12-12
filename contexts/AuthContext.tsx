@@ -2,19 +2,22 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import api from "../services/api";
 import { router } from "expo-router";
+import { AxiosResponse } from "axios";
 
 interface AuthContextData {
     isAuthenticated: boolean;
+    isGlobalLoading: boolean;
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
+    logout: () => Promise<void | AxiosResponse>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // Novo estado para carregamento
+    const [isGlobalLoading, setIsGlobalLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const checkToken = async () => {
@@ -24,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setIsAuthenticated(true);
             }
 
-            setIsLoading(false);
+            setIsGlobalLoading(false);
         };
 
         checkToken();
@@ -32,20 +35,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const login = async (email: string, password: string) => {
         try {
+            setIsLoading(true);
+
             const response = await api.post("/login", { email, password });
 
             await SecureStore.setItemAsync("authToken", response.data.token);
 
             setIsAuthenticated(true);
-
             router.replace("/(auth)/(tabs)/home");
-        } catch (error) {
+            setIsLoading(false);
+        } catch (error: any) {
+            setIsLoading(false);
+
+            if (error.response) {
+                return error.response;
+            }
+
             console.error("Erro no login:", error);
         }
     };
 
     const logout = async () => {
         try {
+            setIsLoading(true);
+
             const response = await api.post("/logout");
 
             if (response.status === 200) {
@@ -54,13 +67,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setIsAuthenticated(false);
             router.replace("/(public)/login");
+            setIsLoading(false);
         } catch (error) {
+            setIsLoading(false);
             console.error("Erro durante o logout:", error);
         }
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ isAuthenticated, isGlobalLoading, isLoading, login, logout }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 

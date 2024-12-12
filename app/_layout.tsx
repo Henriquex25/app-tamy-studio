@@ -24,7 +24,7 @@ const theme = {
 };
 
 const InitialLayout = () => {
-    const { isLoading, isAuthenticated } = useAuth();
+    const { isGlobalLoading, isAuthenticated } = useAuth();
     const segments = useSegments();
     const router = useRouter();
 
@@ -33,7 +33,7 @@ const InitialLayout = () => {
     });
 
     useEffect(() => {
-        if (!fontsLoaded || isLoading) {
+        if (!fontsLoaded || isGlobalLoading) {
             SplashScreen.hideAsync();
 
             return;
@@ -46,15 +46,15 @@ const InitialLayout = () => {
         } else if (!isAuthenticated) {
             router.replace("/login");
         }
-    }, [fontsLoaded, isAuthenticated, isLoading]);
+    }, [fontsLoaded, isAuthenticated, isGlobalLoading]);
 
-    if (!fontsLoaded || isLoading) {
+    if (!fontsLoaded || isGlobalLoading) {
         return null;
     }
 
     return (
         <SafeAreaView className="flex-1 bg-primary-300">
-            <StatusBar barStyle="dark-content"  backgroundColor={themeColors.primary[300]}/>
+            <StatusBar barStyle="dark-content" backgroundColor={themeColors.primary[300]} />
             <PaperProvider theme={theme}>
                 <Slot />
             </PaperProvider>
@@ -68,4 +68,4 @@ export default function RootLayout() {
             <InitialLayout />
         </AuthProvider>
     );
-};
+}

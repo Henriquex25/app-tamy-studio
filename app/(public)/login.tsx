@@ -1,21 +1,49 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import { Input } from "../../components/form/input/index";
+import { Input } from "@/components/form/input/index";
 import { Link } from "expo-router";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import Button from "@/components/Button";
+
+interface ValidationErrors {
+    email?: string[];
+    password?: string[];
+}
 
 export default function LoginScreen() {
     const { login, isLoading } = useAuth();
     const [email, setEmail] = useState("test@example.com");
-    const [password, setPassword] = useState("password");
+    const [password, setPassword] = useState("");
+    const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
-    const handleLogin = async () => {
-        await login(email, password);
-    };
+    async function handleLogin() {
+        validate();
+
+        if (email.length === 0 || password.length === 0) return;
+
+        const response: any = await login(email, password);
+
+        if (response !== undefined && response.data?.hasOwnProperty("errors")) {
+            setValidationErrors(response.data.errors);
+        }
+    }
+
+    function validate() {
+        const errors = validationErrors;
+
+        if (email.length === 0) {
+            errors.email = ["O campo email é obrigatório."];
+        }
+
+        if (password.length === 0) {
+            errors.password = ["O campo senha é obrigatório."];
+        }
+
+        setValidationErrors(errors);
+    }
 
     return (
         <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8">
-            {/* Logo */}
             <View className="flex w-full -mt-5">
                 <Image source={require("../../assets/images/logo.png")} className="w-40 h-40 self-center" />
             </View>
@@ -30,17 +58,25 @@ export default function LoginScreen() {
                         textContentType="emailAddress"
                         onChangeText={setEmail}
                         value={email}
+                        errorMessage={validationErrors.email?.[0]}
+                        autoCapitalize="none"
                     />
                 </View>
 
                 {/* Password */}
-                <View className="mt-8">
-                    <Input label="Senha" value={password} secureTextEntry onChangeText={setPassword} />
+                <View className="mt-5">
+                    <Input
+                        label="Senha"
+                        value={password}
+                        secureTextEntry
+                        onChangeText={setPassword}
+                        errorMessage={validationErrors.password?.[0]}
+                    />
                 </View>
 
                 {/* Esqueci minha senha */}
                 <View>
-                    <Link href="/forgot-password" className="text-sm text-right pr-2 text-pink-500 mt-4">
+                    <Link href="/forgot-password" className="text-sm text-right pr-2 text-pink-500 mt-1.5">
                         Esqueci minha senha
                     </Link>
                 </View>
@@ -49,27 +85,12 @@ export default function LoginScreen() {
             {/* Botões */}
             <View className="mt-10 w-full">
                 {/* Entrar */}
-                <TouchableOpacity
-                    className="w-full bg-pink-400 py-3 rounded-3xl"
-                    activeOpacity={0.7}
-                    onPress={handleLogin}
-                >
-                    <Text className="text-center font-bold text-xl text-gray-800">Entrar</Text>
-                </TouchableOpacity>
+                <Button color="primary" onPress={handleLogin} label="Entrar" loading={isLoading} />
 
                 {/* Cadastrar */}
                 <Link href="/register" asChild>
-                    <TouchableOpacity className="mt-4 w-full py-3 rounded-3xl" activeOpacity={0.7}>
-                        <Text className="text-center font-bold text-lg text-pink-500">Cadastrar</Text>
-                    </TouchableOpacity>
+                    <Button color="transparent" label="Cadastrar" labelColor="text-primary-500" className="mt-3" />
                 </Link>
-
-                {/* Convidado */}
-                {/* <TouchableOpacity className="mt-8 w-full py-2.5 rounded-3xl" activeOpacity={0.7}>
-                    <Text className="text-center font-semibold text-lg text-pink-500">
-                        Continuar como convidado
-                    </Text>
-                </TouchableOpacity> */}
             </View>
         </View>
     );
