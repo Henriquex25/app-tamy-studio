@@ -8,13 +8,15 @@ interface ButtonProps extends React.ComponentProps<typeof TouchableOpacity> {
     disabled?: boolean;
     loading?: boolean;
     className?: string;
-    color?: "primary" | "secondary" | "danger" | "transparent";
+    color?: "primary" | "secondary" | "danger" | "transparent" | "custom";
     labelColor?: string;
+    prepend?: () => React.ReactNode;
+    append?: () => React.ReactNode;
 }
 
 const Button = forwardRef<View, ButtonProps>((props, ref) => {
     function getBackgroundColor(): string | undefined {
-        if (props.className?.includes("bg-")) {
+        if (props.className?.includes("bg-") || props.color === "custom") {
             return;
         }
 
@@ -29,6 +31,10 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
     }
 
     function getTextColor(): string {
+        if (props.color === "custom") {
+            return "";
+        }
+
         const colors = {
             primary: "text-gray-800",
             secondary: "text-white",
@@ -40,6 +46,10 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
     }
 
     function getActivityIndicatorColor(): string {
+        if (props.color == "custom") {
+            return "";
+        }
+
         const colors = {
             primary: "#1f2937",
             secondary: "#fff",
@@ -61,6 +71,7 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
             disabled={props.disabled || props.loading}
         >
             <View className="flex flex-row items-center justify-center">
+                {props.prepend && props.prepend()}
                 {props.label?.length && !props.loading && (
                     <Text className={`font-bold text-xl mr-2.5 ${props.labelColor || getTextColor()}`}>
                         {props.label}
@@ -68,6 +79,7 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
                 )}
                 {props.loading && <ActivityIndicator size="large" color={getActivityIndicatorColor()} />}
                 {props.children}
+                {props.append && props.append()}
             </View>
         </TouchableOpacity>
     );

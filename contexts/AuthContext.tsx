@@ -3,6 +3,10 @@ import * as SecureStore from "expo-secure-store";
 import api from "../services/api";
 import { router } from "expo-router";
 import { AxiosResponse } from "axios";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+
+WebBrowser.maybeCompleteAuthSession();
 
 interface AuthContextData {
     isAuthenticated: boolean;
@@ -10,6 +14,7 @@ interface AuthContextData {
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void | AxiosResponse>;
+    googleLogin: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -18,6 +23,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isGlobalLoading, setIsGlobalLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        clientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+        // iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+        // androidClientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
+        redirectUri: process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI,
+    });
 
     useEffect(() => {
         const checkToken = async () => {
@@ -33,6 +45,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         checkToken();
     }, []);
 
+    useEffect(() => {
+        if (response?.type === "success") {
+            const { authentication } = response;
+
+            if (authentication) {
+                handleGoogleLogin(authentication.accessToken);
+            }
+        }
+    }, [response]);
+
     const login = async (email: string, password: string) => {
         try {
             setIsLoading(true);
@@ -43,15 +65,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setIsAuthenticated(true);
             router.replace("/(auth)/(tabs)/home");
-            setIsLoading(false);
         } catch (error: any) {
-            setIsLoading(false);
-
             if (error.response) {
                 return error.response;
             }
 
             console.error("Erro no login:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const googleLogin = async () => {
+        await promptAsync();
+    };
+
+    const handleGoogleLogin = async (accessToken: string) => {
+        try {
+            setIsLoading(true);
+            const res = await api.post("/auth/google", { access_token: accessToken });
+
+            await SecureStore.setItemAsync("authToken", res.data.token);
+
+            setIsAuthenticated(true);
+            router.replace("/(auth)/(tabs)/home");
+        } catch (error) {
+            console.error("Erro ao autenticar com o Google:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -75,7 +116,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isGlobalLoading, isLoading, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                isGlobalLoading,
+                isLoading,
+                login,
+                googleLogin,
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Image } from "react-native";
 import { Input } from "@/components/form/input/index";
 import { Link } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/Button";
+import { Ionicons } from "@expo/vector-icons";
 
 interface ValidationErrors {
     email?: string[];
@@ -11,7 +12,7 @@ interface ValidationErrors {
 }
 
 export default function LoginScreen() {
-    const { login, isLoading } = useAuth();
+    const { login, isLoading, googleLogin } = useAuth();
     const [email, setEmail] = useState("test@example.com");
     const [password, setPassword] = useState("");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -87,9 +88,19 @@ export default function LoginScreen() {
                 {/* Entrar */}
                 <Button color="primary" onPress={handleLogin} label="Entrar" loading={isLoading} />
 
+                {/* Entrar com Google */}
+                <Button
+                    color="transparent"
+                    label="Entrar com o Google"
+                    labelColor="text-primary-500"
+                    className="mt-5"
+                    prepend={() => <Ionicons name="logo-google" size={22} color="black" style={{ marginRight: 12 }} />}
+                    onPress={googleLogin}
+                />
+
                 {/* Cadastrar */}
                 <Link href="/register" asChild>
-                    <Button color="transparent" label="Cadastrar" labelColor="text-primary-500" className="mt-3" />
+                    <Button color="transparent" label="Cadastrar" labelColor="text-primary-500" className="mt-2" />
                 </Link>
             </View>
         </View>

@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { useState, useEffect } from "react";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
-import { StatusBar } from '@/components/StatusBar';
-import Header from '@/components/Header';
-import { Ionicons } from '@expo/vector-icons';
-import themeColors from '@/styles/themeColors';
-import { Container } from '@/components/Container';
+import { StatusBar } from "@/components/StatusBar";
+import Header from "@/components/Header";
+import { Ionicons } from "@expo/vector-icons";
+import themeColors from "@/styles/themeColors";
+import { Container } from "@/components/Container";
 
 interface IScheduledService {
     id: string;
@@ -24,28 +24,28 @@ export default function HomeScreen() {
     useState(() => {
         setScheduledServices([
             {
-                id: '1',
-                name: 'Alongamento Cílios',
-                description: 'Descrição do Serviço 1',
-                date: '01/01/2023',
-                time: '10:00',
-                service: 'Serviço 1',
-                price: 10000
+                id: "1",
+                name: "Alongamento Cílios",
+                description: "Descrição do Serviço 1",
+                date: "01/01/2023",
+                time: "10:00",
+                service: "Serviço 1",
+                price: 10000,
             },
             {
-                id: '2',
-                name: 'Manicure',
-                description: 'Descrição do Serviço 2',
-                date: '01/01/2023',
-                time: '10:00',
-                service: 'Serviço 1',
-                price: 20000
+                id: "2",
+                name: "Manicure",
+                description: "Descrição do Serviço 2",
+                date: "01/01/2023",
+                time: "10:00",
+                service: "Serviço 1",
+                price: 20000,
             },
-        ])
-    })
+        ]);
+    });
 
     return (
-        <>
+        <View className="flex-1">
             <StatusBar />
 
             <Container>
@@ -93,7 +93,12 @@ export default function HomeScreen() {
 
                                         {/* Tempo restante */}
                                         <View className="w-full flex flex-row justify-center items-center mt-1 gap-x-1">
-                                            <Ionicons name="time-outline" size={15} color={themeColors.primary[400]} style={{ marginTop: 2, opacity: 0.7 }} />
+                                            <Ionicons
+                                                name="time-outline"
+                                                size={15}
+                                                color={themeColors.primary[400]}
+                                                style={{ marginTop: 2, opacity: 0.7 }}
+                                            />
                                             <Text className="text-primary-400/70">30 min</Text>
                                         </View>
                                     </View>
@@ -114,6 +119,6 @@ export default function HomeScreen() {
                     />
                 </View>
             </Container>
-        </>
+        </View>
     );
 }
