@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import api from "../services/api";
 import { router } from "expo-router";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 
@@ -32,18 +32,43 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     useEffect(() => {
-        const checkToken = async () => {
-            const token = await SecureStore.getItemAsync("authToken");
-
-            if (token) {
-                setIsAuthenticated(true);
-            }
-
-            setIsGlobalLoading(false);
-        };
-
         checkToken();
     }, []);
+
+    const checkToken = async () => {
+        try {
+            const token = await SecureStore.getItemAsync("authToken");
+
+            if (!token) {
+                setIsAuthenticated(false);
+                return;
+            }
+
+            const checkToken = await api.post("/auth/check");
+            if (checkToken.status !== 200) {
+                setIsAuthenticated(false);
+                return;
+            }
+
+            setIsAuthenticated(true);
+        } catch (error: any) {
+            if (error instanceof AxiosError === false) {
+                console.error("Erro ao verificar o token:", error);
+            }
+
+            if (
+                error instanceof AxiosError &&
+                error.response?.status === 401 &&
+                error.response?.data?.message.toLowerCase().include("unauthenticated")
+            ) {
+                await SecureStore.deleteItemAsync("authToken");
+            }
+
+            setIsAuthenticated(false);
+        } finally {
+            setIsGlobalLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (response?.type === "success") {
@@ -108,10 +133,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             setIsAuthenticated(false);
             router.replace("/(public)/login");
-            setIsLoading(false);
         } catch (error) {
-            setIsLoading(false);
             console.error("Erro durante o logout:", error);
+        } finally {
+            setIsLoading(false);
         }
     };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Image } from "react-native";
 import { Input } from "@/components/form/input/index";
 import { Link } from "expo-router";
@@ -14,7 +14,7 @@ interface ValidationErrors {
 export default function LoginScreen() {
     const { login, isLoading, googleLogin } = useAuth();
     const [email, setEmail] = useState("test@example.com");
-    const [password, setPassword] = useState("");
+    const [password, setPassword] = useState("password");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
     async function handleLogin() {
@@ -30,7 +30,7 @@ export default function LoginScreen() {
     }
 
     function validate() {
-        const errors = validationErrors;
+        const errors: ValidationErrors = { ...validationErrors };
 
         if (email.length === 0) {
             errors.email = ["O campo email é obrigatório."];
