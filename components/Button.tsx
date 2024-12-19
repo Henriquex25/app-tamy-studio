@@ -6,7 +6,7 @@ interface ButtonProps extends React.ComponentProps<typeof TouchableOpacity> {
     label?: string;
     onPress?: () => void;
     disabled?: boolean;
-    loading?: boolean;
+    isLoading?: boolean;
     className?: string;
     color?: "primary" | "secondary" | "danger" | "transparent" | "custom";
     labelColor?: string;
@@ -64,20 +64,20 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
         <TouchableOpacity
             ref={ref}
             {...props}
-            className={`w-full rounded-3xl ${props.loading ? "pointer-events-none py-2" : "py-3.5"} ${
+            className={`w-full rounded-3xl ${props.isLoading ? "pointer-events-none py-2" : "py-3.5"} ${
                 props.className ?? ""
             } ${getBackgroundColor()}`}
             activeOpacity={props.activeOpacity ?? 0.7}
-            disabled={props.disabled || props.loading}
+            disabled={props.disabled || props.isLoading}
         >
             <View className="flex flex-row items-center justify-center">
                 {props.prepend && props.prepend()}
-                {props.label?.length && !props.loading && (
+                {props.label?.length && !props.isLoading && (
                     <Text className={`font-bold text-xl mr-2.5 ${props.labelColor || getTextColor()}`}>
                         {props.label}
                     </Text>
                 )}
-                {props.loading && <ActivityIndicator size="large" color={getActivityIndicatorColor()} />}
+                {props.isLoading && <ActivityIndicator size="large" color={getActivityIndicatorColor()} />}
                 {props.children}
                 {props.append && props.append()}
             </View>

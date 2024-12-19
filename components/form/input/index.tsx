@@ -6,6 +6,7 @@ import { useState } from "react";
 export interface InputProps extends TextInputProps {
     label?: string;
     errorMessage?: string;
+    required?: boolean;
 }
 
 export function Input(props: InputProps) {
@@ -22,11 +23,12 @@ export function Input(props: InputProps) {
                 {/* Título */}
                 <Text
                     className={
-                        "bg-primary-300 absolute left-3 -top-3 px-1.5 font-semibold text-sm " +
+                        "bg-primary-300 absolute left-3 -top-3.5 px-1.5 font-semibold " +
                         (props.errorMessage ? "text-red-500" : "text-pink-500")
                     }
                 >
                     {props.label}
+                    {props.required && <Text className="text-red-600">*</Text>}
                 </Text>
 
                 <TextInput

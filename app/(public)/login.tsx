@@ -5,6 +5,7 @@ import { Link } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/Button";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 interface ValidationErrors {
     email?: string[];
@@ -12,10 +13,16 @@ interface ValidationErrors {
 }
 
 export default function LoginScreen() {
-    const { login, isLoading, googleLogin } = useAuth();
+    const { login, isLoading, googleLogin, isAuthenticated } = useAuth();
     const [email, setEmail] = useState("test@example.com");
     const [password, setPassword] = useState("password");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.replace("/(auth)/(tabs)/home");
+        }
+    }, []);
 
     async function handleLogin() {
         validate();
@@ -46,7 +53,7 @@ export default function LoginScreen() {
     return (
         <View className="bg-primary-300 flex-1 justify-center items-center w-full px-8">
             <View className="flex w-full -mt-5">
-                <Image source={require("../../assets/images/logo.png")} className="w-40 h-40 self-center" />
+                <Image source={require("@/assets/images/logo.png")} className="w-40 h-40 self-center" />
             </View>
 
             {/* Form */}
@@ -86,7 +93,7 @@ export default function LoginScreen() {
             {/* Botões */}
             <View className="mt-10 w-full">
                 {/* Entrar */}
-                <Button color="primary" onPress={handleLogin} label="Entrar" loading={isLoading} />
+                <Button color="primary" onPress={handleLogin} label="Entrar" isLoading={isLoading} />
 
                 {/* Entrar com Google */}
                 <Button
