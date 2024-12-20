@@ -10,6 +10,8 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import themeColors from "@/styles/themeColors";
 import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
+import Toast from "react-native-toast-message";
+import ToastConfig from "@/components/ToastConfig";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,6 +60,7 @@ const InitialLayout = () => {
             <PaperProvider theme={theme}>
                 <Slot />
             </PaperProvider>
+            <Toast config={ToastConfig} />
         </SafeAreaView>
     );
 };

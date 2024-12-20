@@ -25,29 +25,11 @@ export default function LoginScreen() {
     }, []);
 
     async function handleLogin() {
-        validate();
-
-        if (email.length === 0 || password.length === 0) return;
-
         const response: any = await login(email, password);
 
         if (response !== undefined && response.data?.hasOwnProperty("errors")) {
             setValidationErrors(response.data.errors);
         }
-    }
-
-    function validate() {
-        const errors: ValidationErrors = { ...validationErrors };
-
-        if (email.length === 0) {
-            errors.email = ["O campo email é obrigatório."];
-        }
-
-        if (password.length === 0) {
-            errors.password = ["O campo senha é obrigatório."];
-        }
-
-        setValidationErrors(errors);
     }
 
     return (

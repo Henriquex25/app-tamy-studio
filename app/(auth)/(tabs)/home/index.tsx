@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { useAuth } from "@/contexts/AuthContext";
 import { StatusBar } from "@/components/StatusBar";
 import Header from "@/components/Header";
 import { Ionicons } from "@expo/vector-icons";
 import themeColors from "@/styles/themeColors";
 import { Container } from "@/components/Container";
+import { useLocalSearchParams } from "expo-router";
+import Toast, { ToastShowParams } from "react-native-toast-message";
 
 interface IScheduledService {
     id: string;
@@ -18,10 +19,16 @@ interface IScheduledService {
 }
 
 export default function HomeScreen() {
-    const { logout } = useAuth();
     const [scheduledServices, setScheduledServices] = useState<IScheduledService[]>([]);
+    let { toast } = useLocalSearchParams<{ toast?: string }>();
 
-    useState(() => {
+    useEffect(() => {
+        const toastObj: ToastShowParams = JSON.parse(toast || "{}");
+        if (Object.keys(toastObj).length > 0) {
+            Toast.show(toastObj);
+            toast = undefined;
+        }
+
         setScheduledServices([
             {
                 id: "1",
@@ -42,7 +49,7 @@ export default function HomeScreen() {
                 price: 20000,
             },
         ]);
-    });
+    }, []);
 
     return (
         <View className="flex-1">

@@ -14,7 +14,17 @@ interface AuthContextData {
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void | AxiosResponse>;
+    register: (fields: IRegisterFields) => Promise<void | AxiosResponse>;
     googleLogin: () => Promise<void>;
+}
+
+export interface IRegisterFields {
+    name: string;
+    email: string;
+    email_confirmation: string;
+    cell_phone: string;
+    password: string;
+    password_confirmation: string;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
@@ -87,6 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await api.post("/login", { email, password });
 
             await SecureStore.setItemAsync("authToken", response.data.token);
+            await SecureStore.setItemAsync("user", JSON.stringify(response.data.user));
 
             setIsAuthenticated(true);
             router.replace("/(auth)/(tabs)/home");
@@ -121,6 +132,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const register = async (fields: IRegisterFields) => {
+        try {
+            setIsLoading(true);
+
+            const response = await api.post("/register", fields);
+
+            await SecureStore.setItemAsync("authToken", response.data.token);
+            await SecureStore.setItemAsync("user", JSON.stringify(response.data.user));
+
+            setIsAuthenticated(true);
+            router.replace({
+                pathname: "/(auth)/(tabs)/home",
+                params: {
+                    toast: JSON.stringify({
+                        type: "success",
+                        text1: "Cadastrado realizado com sucesso!",
+                        text2: "Não se esqueça de validar seu email.",
+                        visibilityTime: 8000,
+                    }),
+                },
+            });
+        } catch (error: any) {
+            if (error.response) {
+                return error.response;
+            }
+
+            console.error("Erro ao tentar registrar um novo usuário:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const logout = async () => {
         try {
             setIsLoading(true);
@@ -129,6 +172,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (response.status === 200) {
                 await SecureStore.deleteItemAsync("authToken");
+                await SecureStore.deleteItemAsync("user");
             }
 
             setIsAuthenticated(false);
@@ -148,6 +192,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 isLoading,
                 login,
                 googleLogin,
+                register,
                 logout,
             }}
         >

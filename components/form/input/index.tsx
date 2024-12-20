@@ -2,11 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, TextInput, Text, TextInputProps, Pressable } from "react-native";
 import themeColors from "@/styles/themeColors";
 import { useState } from "react";
+import { mask } from "react-native-mask-text";
 
 export interface InputProps extends TextInputProps {
     label?: string;
     errorMessage?: string;
     required?: boolean;
+    mask?: string;
 }
 
 export function Input(props: InputProps) {
@@ -42,6 +44,9 @@ export function Input(props: InputProps) {
                     secureTextEntry={props.secureTextEntry && !visiblePassword}
                     autoCapitalize={
                         props.secureTextEntry && props.autoCapitalize === undefined ? "none" : props.autoCapitalize
+                    }
+                    onChangeText={(text) =>
+                        props.mask ? props.onChangeText?.(mask(text, props.mask)) : props.onChangeText?.(text)
                     }
                 />
 
