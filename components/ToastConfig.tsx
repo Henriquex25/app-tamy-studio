@@ -7,12 +7,13 @@ const infoColor = "#06b6d4";
 const warningColor = "#f59e0b";
 const titleFontSize = 16;
 const bodyFontSize = 13;
+const text2NumberOfLines = 3;
 
 export default {
     success: (props: any) => (
         <BaseToast
             {...props}
-            style={{ borderLeftColor: successColor, width: "88%", height: 70 }}
+            style={{ borderLeftColor: successColor, width: "88%", height: 72 }}
             contentContainerStyle={{ paddingHorizontal: 15 }}
             text1Style={{
                 fontSize: titleFontSize,
@@ -24,6 +25,7 @@ export default {
                 paddingLeft: 5,
                 paddingRight: 5,
             }}
+            text2NumberOfLines={text2NumberOfLines}
         />
     ),
 
@@ -39,6 +41,7 @@ export default {
             text2Style={{
                 fontSize: bodyFontSize,
             }}
+            text2NumberOfLines={text2NumberOfLines}
         />
     ),
 
@@ -54,6 +57,7 @@ export default {
             text2Style={{
                 fontSize: bodyFontSize,
             }}
+            text2NumberOfLines={text2NumberOfLines}
         />
     ),
 
@@ -70,6 +74,7 @@ export default {
             text2Style={{
                 fontSize: bodyFontSize,
             }}
+            text2NumberOfLines={text2NumberOfLines}
         />
     ),
 };

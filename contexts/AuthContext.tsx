@@ -16,6 +16,7 @@ interface AuthContextData {
     logout: () => Promise<void | AxiosResponse>;
     register: (fields: IRegisterFields) => Promise<void | AxiosResponse>;
     googleLogin: () => Promise<void>;
+    forgotPassword: (email: string) => Promise<AxiosResponse>;
 }
 
 export interface IRegisterFields {
@@ -184,6 +185,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    const forgotPassword = async (email: string) => {
+        try {
+            setIsLoading(true);
+
+            return await api.post("/forgot-password", { email });
+        } catch (error: any) {
+            console.error("Erro ao tentar recuperar a senha:", error);
+            return error.response;
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <AuthContext.Provider
             value={{
@@ -194,6 +208,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 googleLogin,
                 register,
                 logout,
+                forgotPassword,
             }}
         >
             {children}

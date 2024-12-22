@@ -30,6 +30,8 @@ export default function Register() {
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
     async function handleRegister() {
+        if (isLoading) return;
+
         setValidationErrors({});
         const response: any = await register(payload);
 
