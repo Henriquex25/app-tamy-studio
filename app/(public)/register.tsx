@@ -5,7 +5,8 @@ import { StatusBar } from "@/components/StatusBar";
 import { Input } from "@/components/form/input";
 import React, { useState, useEffect } from "react";
 import Button from "@/components/Button";
-import { useAuth, IRegisterFields } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRegistrationType } from "@/types/auth/User";
 
 export interface ValidationErrors {
     name?: string[];
@@ -19,7 +20,7 @@ export interface ValidationErrors {
 export default function Register() {
     const { register, isLoading, googleLogin, isAuthenticated } = useAuth();
     const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
-    const [payload, setPayload] = useState<IRegisterFields>({
+    const [payload, setPayload] = useState<UserRegistrationType>({
         name: "",
         email: "",
         email_confirmation: "",

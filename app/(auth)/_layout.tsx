@@ -1,6 +1,4 @@
-import { Stack, Tabs } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import themeColors from "../../styles/themeColors";
+import { Stack } from "expo-router";
 
 const tabBarActiveTintColor: string = "#4b5563"; // gray-600
 

@@ -12,6 +12,7 @@ import themeColors from "@/styles/themeColors";
 import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import ToastConfig from "@/components/ToastConfig";
+import { UserProvider } from "@/contexts/UserContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,8 +68,10 @@ const InitialLayout = () => {
 
 export default function RootLayout() {
     return (
-        <AuthProvider>
-            <InitialLayout />
-        </AuthProvider>
+        <UserProvider>
+            <AuthProvider>
+                <InitialLayout />
+            </AuthProvider>
+        </UserProvider>
     );
 }

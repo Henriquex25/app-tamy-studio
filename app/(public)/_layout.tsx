@@ -14,6 +14,7 @@ export default function PublicLayout() {
                 name="login"
                 options={{
                     title: "Login",
+                    headerShown: false,
                 }}
             />
             <Stack.Screen

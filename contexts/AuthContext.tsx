@@ -5,6 +5,8 @@ import { router } from "expo-router";
 import { AxiosError, AxiosResponse } from "axios";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
+import { UserRegistrationType, UserType } from "@/types/auth/User";
+import { useUser } from "./UserContext";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -14,26 +16,18 @@ interface AuthContextData {
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void | AxiosResponse>;
-    register: (fields: IRegisterFields) => Promise<void | AxiosResponse>;
+    register: (fields: UserRegistrationType) => Promise<void | AxiosResponse>;
     googleLogin: () => Promise<void>;
     forgotPassword: (email: string) => Promise<AxiosResponse>;
-}
-
-export interface IRegisterFields {
-    name: string;
-    email: string;
-    email_confirmation: string;
-    cell_phone: string;
-    password: string;
-    password_confirmation: string;
 }
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isGlobalLoading, setIsGlobalLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
+    const { setUser, clearUser, user } = useUser();
+    const isAuthenticated = !!user;
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         clientId: process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID,
@@ -51,17 +45,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const token = await SecureStore.getItemAsync("authToken");
 
             if (!token) {
-                setIsAuthenticated(false);
+                setIsGlobalLoading(false);
                 return;
             }
 
             const checkToken = await api.post("/auth/check");
             if (checkToken.status !== 200) {
-                setIsAuthenticated(false);
+                setIsGlobalLoading(false);
                 return;
             }
-
-            setIsAuthenticated(true);
         } catch (error: any) {
             if (error instanceof AxiosError === false) {
                 console.error("Erro ao verificar o token:", error);
@@ -74,8 +66,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             ) {
                 await SecureStore.deleteItemAsync("authToken");
             }
-
-            setIsAuthenticated(false);
         } finally {
             setIsGlobalLoading(false);
         }
@@ -100,7 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await SecureStore.setItemAsync("authToken", response.data.token);
             await SecureStore.setItemAsync("user", JSON.stringify(response.data.user));
 
-            setIsAuthenticated(true);
+            setUser(response.data.user);
+
             router.replace("/(auth)/(tabs)/home");
         } catch (error: any) {
             if (error.response) {
@@ -120,11 +111,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const handleGoogleLogin = async (accessToken: string) => {
         try {
             setIsLoading(true);
+
             const res = await api.post("/auth/google", { access_token: accessToken });
 
             await SecureStore.setItemAsync("authToken", res.data.token);
+            await SecureStore.setItemAsync("user", JSON.stringify(res.data.user));
 
-            setIsAuthenticated(true);
+            setUser(res.data.user);
             router.replace("/(auth)/(tabs)/home");
         } catch (error) {
             console.error("Erro ao autenticar com o Google:", error);
@@ -133,7 +126,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const register = async (fields: IRegisterFields) => {
+    const register = async (fields: UserRegistrationType) => {
         try {
             setIsLoading(true);
 
@@ -142,7 +135,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await SecureStore.setItemAsync("authToken", response.data.token);
             await SecureStore.setItemAsync("user", JSON.stringify(response.data.user));
 
-            setIsAuthenticated(true);
+            setUser(response.data.user);
+
             router.replace({
                 pathname: "/(auth)/(tabs)/home",
                 params: {
@@ -176,7 +170,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 await SecureStore.deleteItemAsync("user");
             }
 
-            setIsAuthenticated(false);
+            clearUser();
+
             router.replace("/(public)/login");
         } catch (error) {
             console.error("Erro durante o logout:", error);
@@ -196,7 +191,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <AuthContext.Provider
