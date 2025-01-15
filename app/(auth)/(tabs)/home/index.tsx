@@ -7,7 +7,7 @@ import themeColors from "@/styles/themeColors";
 import { Container } from "@/components/Container";
 import { useLocalSearchParams } from "expo-router";
 import Toast, { ToastShowParams } from "react-native-toast-message";
-import { useUser} from "@/contexts/UserContext";
+import { useUser } from "@/contexts/UserContext";
 
 interface IScheduledService {
     id: string;
@@ -20,9 +20,9 @@ interface IScheduledService {
 }
 
 export default function HomeScreen() {
-    const { user } = useUser();
+    const {user} = useUser();
     const [scheduledServices, setScheduledServices] = useState<IScheduledService[]>([]);
-    let { toast } = useLocalSearchParams<{ toast?: string }>();
+    let {toast} = useLocalSearchParams<{ toast?: string }>();
 
     function getFirstName(): string {
         return user?.name?.split(" ")[0] || "";
@@ -59,10 +59,10 @@ export default function HomeScreen() {
 
     return (
         <View className="flex-1">
-            <StatusBar />
+            <StatusBar/>
 
             <Container>
-                <Header label={`Ola, ${getFirstName()}`} />
+                <Header label={`Ola, ${getFirstName()}`}/>
 
                 <Text className="mt-8 text-center font-bold text-2xl text-primary-500">Meus agendamentos</Text>
 
@@ -71,12 +71,12 @@ export default function HomeScreen() {
                     <FlatList
                         data={scheduledServices}
                         keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
+                        renderItem={({item}) => (
                             <View
                                 className="w-[89%] rounded-xl mx-auto flex flex-row bg-gray-50 overflow-hidden mb-5"
                                 style={{
                                     shadowColor: "black",
-                                    shadowOffset: { width: 0, height: 3 },
+                                    shadowOffset: {width: 0, height: 3},
                                     shadowOpacity: 0.8,
                                     shadowRadius: 5,
                                     elevation: 5,
@@ -110,7 +110,7 @@ export default function HomeScreen() {
                                                 name="time-outline"
                                                 size={15}
                                                 color={themeColors.primary[400]}
-                                                style={{ marginTop: 2, opacity: 0.7 }}
+                                                style={{marginTop: 2, opacity: 0.7}}
                                             />
                                             <Text className="text-primary-400/70">30 min</Text>
                                         </View>
@@ -118,7 +118,10 @@ export default function HomeScreen() {
 
                                     {/* Botão */}
                                     <View className="flex justify-center w-1/12">
-                                        <TouchableOpacity onPress={() => {}} activeOpacity={0.6}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                            }} activeOpacity={0.6}
+                                        >
                                             <Ionicons
                                                 name="ellipsis-vertical-sharp"
                                                 size={26}

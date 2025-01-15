@@ -18,7 +18,7 @@ export function Input(props: InputProps) {
         <View className="relative">
             <View
                 className={
-                    "flex flex-row items-center justify-between px-4 bg-transparent h-14 rounded-xl " +
+                    "flex flex-row items-center justify-between px-4 bg-transparent h-14 rounded-xl w-full " +
                     (props.errorMessage ? "border-2 border-red-500" : "border border-primary-500")
                 }
             >

@@ -15,3 +15,15 @@ export type UserRegistrationType = {
     password: string;
     password_confirmation: string;
 };
+
+export type UserChangePasswordType = {
+    currentPassword: string;
+    newPassword: string;
+    confirmNewPassword: string;
+};
+
+export type ValidationErrorsChangePassword = {
+    currentPassword?: string[];
+    newPassword?: string[];
+    newPassword_confirmation?: string[];
+};

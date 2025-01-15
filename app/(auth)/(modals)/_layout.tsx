@@ -27,6 +27,14 @@ export default function ModalsLayout() {
                     headerTitleAlign: "center",
                 }}
             />
+
+            <Stack.Screen
+                name="profile/change_password"
+                options={{
+                    title: "Trocar senha",
+                    headerTitleAlign: "center",
+                }}
+            />
         </Stack>
     );
 }

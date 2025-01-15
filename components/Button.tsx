@@ -4,7 +4,7 @@ import themeColors from "@/styles/themeColors";
 
 interface ButtonProps extends React.ComponentProps<typeof TouchableOpacity> {
     label?: string;
-    onPress?: () => void;
+    onPress?: () => Promise<void> | void;
     disabled?: boolean;
     isLoading?: boolean;
     className?: string;
@@ -64,7 +64,7 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
         <TouchableOpacity
             ref={ref}
             {...props}
-            className={`w-full rounded-3xl ${props.isLoading ? "pointer-events-none py-2" : "py-3.5"} ${
+            className={`w-full rounded-3xl disabled:opacity-60 ${props.isLoading ? "pointer-events-none py-2" : "py-3.5"} ${
                 props.className ?? ""
             } ${getBackgroundColor()}`}
             activeOpacity={props.activeOpacity ?? 0.7}
