@@ -7,6 +7,7 @@ import themeColors from "@/styles/themeColors";
 import { Container } from "@/components/Container";
 import { useLocalSearchParams } from "expo-router";
 import Toast, { ToastShowParams } from "react-native-toast-message";
+import { useUser} from "@/contexts/UserContext";
 
 interface IScheduledService {
     id: string;
@@ -19,8 +20,13 @@ interface IScheduledService {
 }
 
 export default function HomeScreen() {
+    const { user } = useUser();
     const [scheduledServices, setScheduledServices] = useState<IScheduledService[]>([]);
     let { toast } = useLocalSearchParams<{ toast?: string }>();
+
+    function getFirstName(): string {
+        return user?.name?.split(" ")[0] || "";
+    }
 
     useEffect(() => {
         const toastObj: ToastShowParams = JSON.parse(toast || "{}");
@@ -56,7 +62,7 @@ export default function HomeScreen() {
             <StatusBar />
 
             <Container>
-                <Header />
+                <Header label={`Ola, ${getFirstName()}`} />
 
                 <Text className="mt-8 text-center font-bold text-2xl text-primary-500">Meus agendamentos</Text>
 

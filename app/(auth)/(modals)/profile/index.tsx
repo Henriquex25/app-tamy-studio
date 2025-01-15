@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Text, TouchableOpacity, View, Image } from "react-native";
 import { Container } from "@/components/Container";
 import { useAuth } from "@/contexts/AuthContext";
@@ -5,6 +6,7 @@ import { useUser } from "@/contexts/UserContext";
 import { StatusBar } from "@/components/StatusBar";
 import { Ionicons } from "@expo/vector-icons";
 import themeColors from "@/styles/themeColors";
+import { Dialog } from "@/components/Dialog";
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -17,8 +19,9 @@ interface ButtonProps {
 }
 
 export default function Profile() {
-    const { logout } = useAuth();
+    const { logout, isLoading } = useAuth();
     const { user } = useUser();
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
 
     function Button({ withDivider = true, ...props }: ButtonProps) {
         const labelColor = props.labelColor || themeColors.primary[500];
@@ -27,7 +30,7 @@ export default function Profile() {
             <TouchableOpacity onPress={props.onPress}>
                 <View
                     className={`flex flex-row items-center pb-3.5 mb-3.5 ${
-                        withDivider && "border-b border-primary-500"
+                        withDivider && "border-b border-primary-500/35"
                     }`}
                 >
                     <Ionicons name={props.icon} size={31} color={labelColor} className="mr-4" />
@@ -38,6 +41,20 @@ export default function Profile() {
                 </View>
             </TouchableOpacity>
         );
+    }
+
+    function ConfirmLogoutModal() {
+        return (
+            <Dialog
+                label="Deseja realmente sair da sua conta?"
+                onConfirm={(): void => {
+                    logout().then((): void => setModalVisible(false))
+                }}
+                visible={modalVisible}
+                hide={setModalVisible}
+                isLoading={isLoading}
+            />
+        )
     }
 
     return (
@@ -60,12 +77,14 @@ export default function Profile() {
                     <Button
                         icon="log-out-outline"
                         label="Sair da conta"
-                        onPress={logout}
+                        onPress={() => setModalVisible(true)}
                         withDivider={false}
                         labelColor="red"
                     />
                 </View>
             </View>
+
+            <ConfirmLogoutModal />
         </Container>
     );
 }
