@@ -27,6 +27,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const loadUser = async () => {
             const userData = await SecureStore.getItemAsync("user");
+
             if (userData) {
                 setUser(JSON.parse(userData));
             }
@@ -49,7 +50,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await api.post("/change-password", { currentPassword, newPassword, confirmNewPassword });
 
             if (response.status === 200 && response.data.hasOwnProperty("status") && response.data.status === "ok") {
-                router.navigate({
+                router.dismissTo({
                     pathname: "/(auth)/(modals)/profile",
                     params: {
                         toast: JSON.stringify({
@@ -59,6 +60,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     }
                 });
             }
+
         } catch (error: any) {
             if (error.response) {
                 return error.response;
@@ -75,8 +77,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
 export const useUser = () => {
     const context = useContext(UserContext);
+
     if (!context) {
         throw new Error("useUser must be used within a UserProvider");
     }
+
     return context;
 };

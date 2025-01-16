@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 
 interface ValidationErrors {
     email?: string[];

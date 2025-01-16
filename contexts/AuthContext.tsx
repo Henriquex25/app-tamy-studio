@@ -17,7 +17,7 @@ interface AuthContextData {
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void | AxiosResponse>;
     register: (fields: UserRegistrationType) => Promise<void | AxiosResponse>;
-    googleLogin: () => Promise<void>;
+    // googleLogin: () => Promise<void>;
     forgotPassword: (email: string) => Promise<AxiosResponse>;
 }
 
@@ -42,20 +42,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const checkToken = async () => {
         try {
-            const token = await SecureStore.getItemAsync("authToken");
+            const token: string | null = await SecureStore.getItemAsync("authToken");
 
-            if (!token) {
-                setIsGlobalLoading(false);
-                return;
-            }
+            if (!token) return;
 
-            const checkToken = await api.post("/auth/check");
-            if (checkToken.status !== 200) {
-                setIsGlobalLoading(false);
-                return;
+            const response  = await api.post("/auth/check");
+
+            if (response.status === 200 && response.data.user) {
+                setUser(response.data.user);
             }
         } catch (error: any) {
-            if (error instanceof AxiosError === false) {
+            if (!(error instanceof AxiosError)) {
                 console.error("Erro ao verificar o token:", error);
             }
 
@@ -65,21 +62,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 error.response?.data?.message.toLowerCase().include("unauthenticated")
             ) {
                 await SecureStore.deleteItemAsync("authToken");
+                clearUser();
             }
         } finally {
             setIsGlobalLoading(false);
         }
     };
 
-    useEffect(() => {
-        if (response?.type === "success") {
-            const { authentication } = response;
-
-            if (authentication) {
-                handleGoogleLogin(authentication.accessToken);
-            }
-        }
-    }, [response]);
+    // useEffect(() => {
+    //     if (response?.type === "success") {
+    //         const { authentication } = response;
+    //
+    //         if (authentication) {
+    //             handleGoogleLogin(authentication.accessToken);
+    //         }
+    //     }
+    // }, [response]);
 
     const login = async (email: string, password: string) => {
         try {
@@ -88,7 +86,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const response = await api.post("/login", { email, password });
 
             await SecureStore.setItemAsync("authToken", response.data.token);
-            await SecureStore.setItemAsync("user", JSON.stringify(response.data.user));
 
             setUser(response.data.user);
 
@@ -104,9 +101,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const googleLogin = async () => {
-        await promptAsync();
-    };
+    // const googleLogin = async () => {
+    //     await promptAsync();
+    // };
 
     const handleGoogleLogin = async (accessToken: string) => {
         try {
@@ -200,7 +197,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 isGlobalLoading,
                 isLoading,
                 login,
-                googleLogin,
+                // googleLogin,
                 register,
                 logout,
                 forgotPassword,

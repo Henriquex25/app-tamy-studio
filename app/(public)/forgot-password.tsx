@@ -25,7 +25,7 @@ export default function ForgotPassword() {
         setValidationErrors({});
 
         const response: AxiosResponse = await forgotPassword(email);
-        console.log(response);
+
         if (response !== undefined && response.data?.hasOwnProperty("errors")) {
             setValidationErrors(response.data.errors);
         }

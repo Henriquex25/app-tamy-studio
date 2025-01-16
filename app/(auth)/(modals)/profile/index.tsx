@@ -9,6 +9,7 @@ import themeColors from "@/styles/themeColors";
 import { Dialog } from "@/components/Dialog";
 import { Link, useLocalSearchParams } from "expo-router";
 import Toast, { ToastShowParams } from "react-native-toast-message";
+import { useRouter } from 'expo-router';
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -24,6 +25,7 @@ export default function Profile() {
     const { logout, isLoading } = useAuth();
     const { user } = useUser();
     const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const router = useRouter();
     let { toast }: { toast?: string } | undefined = useLocalSearchParams<{ toast?: string }>();
 
     useEffect(() => {
@@ -33,7 +35,8 @@ export default function Profile() {
             Toast.show(toastObj);
             toast = undefined;
         }
-    }, []);
+
+    }, [toast]);
 
     const Button = forwardRef<any, ButtonProps>(({ withDivider = true, ...props }, ref) => {
         const labelColor = props.labelColor || themeColors.primary[500];

@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Slot, useRouter, useSegments } from "expo-router";
-import { AuthProvider } from "../contexts/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import React from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import "../styles/global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "react-native";
@@ -42,7 +42,7 @@ const InitialLayout = () => {
             return;
         }
 
-        const inAuthGroup = segments[0] === "(auth)";
+        const inAuthGroup: boolean = segments[0] === "(auth)";
 
         if (isAuthenticated && !inAuthGroup) {
             router.replace("/(auth)/(tabs)/home");
