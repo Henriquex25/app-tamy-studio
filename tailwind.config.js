@@ -12,6 +12,9 @@ module.exports = {
                 primary: themeColors.primary,
                 default: themeColors.darkMode,
             },
+            padding: {
+                default: "1.75rem 1.5rem"
+            }
         },
     },
     plugins: [],

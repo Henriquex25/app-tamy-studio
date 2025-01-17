@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-import { UserType } from "@/types/auth/User";
+import { UserChangeData, UserType } from "@/types/auth/User";
 import api from "@/services/api";
 import {router} from "expo-router";
 
@@ -10,6 +10,7 @@ interface UserContextProps {
     isLoading: boolean;
     clearUser: () => void;
     changePassword: (data: ChangePasswordProps) => Promise<void>;
+    changeUserData: (data: UserChangeData) => Promise<void>;
 }
 
 interface ChangePasswordProps {
@@ -49,7 +50,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             const response = await api.post("/change-password", { currentPassword, newPassword, confirmNewPassword });
 
-            if (response.status === 200 && response.data.hasOwnProperty("status") && response.data.status === "ok") {
+            if (response.status === 200 && response.data.hasOwnProperty("status") && response.data.status === "success") {
                 router.dismissTo({
                     pathname: "/(auth)/(modals)/profile",
                     params: {
@@ -66,13 +67,44 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 return error.response;
             }
 
-            console.error("Erro no login:", error);
+            console.error("Erro ao tentar mudar a senha:", error);
         } finally {
             setIsLoading(false);
         }
     };
 
-    return <UserContext.Provider value={{ user, setUser, clearUser, isLoading, changePassword }}>{children}</UserContext.Provider>;
+    const changeUserData = async (data: UserChangeData) => {
+        try {
+            setIsLoading(true);
+
+            const response = await api.post("/change-user-data", { ...data });
+
+            if (response.status === 200 && response.data.hasOwnProperty("status") && response.data.status === "success") {
+                setUser(response.data.user);
+
+                router.dismissTo({
+                    pathname: "/(auth)/(modals)/profile",
+                    params: {
+                        toast: JSON.stringify({
+                            type: "success",
+                            text1: response.data.message,
+                        }),
+                    }
+                });
+            }
+
+        } catch (error: any) {
+            if (error.response) {
+                return error.response;
+            }
+
+            console.error("Erro ao tentar atualizar os dados do usuário:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    return <UserContext.Provider value={{ user, setUser, clearUser, isLoading, changePassword, changeUserData }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

@@ -19,7 +19,7 @@ export function Input(props: InputProps) {
             <View
                 className={
                     "flex flex-row items-center justify-between px-4 bg-transparent h-14 rounded-xl w-full " +
-                    (props.errorMessage ? "border-2 border-red-500" : "border border-primary-500")
+                    (props.errorMessage ? "border-2 border-red-500" : "border border-primary-500 ")
                 }
             >
                 {/* Título */}
@@ -34,12 +34,12 @@ export function Input(props: InputProps) {
                 </Text>
 
                 <TextInput
-                    className={
-                        "text-lg font-bold placeholder:font-normal flex-1 " +
-                        (props.errorMessage
-                            ? "text-red-500 placeholder:text-red-500"
-                            : "text-pink-500 placeholder:text-primary-500")
-                    }
+                    className={`text-lg font-bold placeholder:font-normal flex-1 ${props.editable === false ? "opacity-85" : ""} 
+                        ${props.errorMessage
+                            ? "text-red-500 placeholder:text-red-500 "
+                            : "text-pink-500 placeholder:text-primary-500} "}
+                        
+                    `}
                     {...props}
                     secureTextEntry={props.secureTextEntry && !visiblePassword}
                     autoCapitalize={

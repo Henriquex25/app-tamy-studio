@@ -18,7 +18,7 @@ export interface ValidationErrors {
 }
 
 export default function Register() {
-    const { register, isLoading, googleLogin, isAuthenticated } = useAuth();
+    const { register, isLoading, isAuthenticated } = useAuth();
     const [keyboardVisible, setKeyboardVisible] = useState<boolean>(false);
     const [payload, setPayload] = useState<UserRegistrationType>({
         name: "",

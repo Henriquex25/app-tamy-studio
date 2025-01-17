@@ -5,7 +5,6 @@ import React from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import "../styles/global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import themeColors from "@/styles/themeColors";
@@ -13,6 +12,7 @@ import { MD3LightTheme as DefaultTheme, PaperProvider } from "react-native-paper
 import Toast from "react-native-toast-message";
 import ToastConfig from "@/components/ToastConfig";
 import { UserProvider } from "@/contexts/UserContext";
+import { StatusBar } from "@/components/StatusBar";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -57,7 +57,7 @@ const InitialLayout = () => {
 
     return (
         <SafeAreaView className="flex-1 bg-primary-300">
-            <StatusBar barStyle="dark-content" backgroundColor={themeColors.primary[300]} />
+            <StatusBar />
             <PaperProvider theme={theme}>
                 <Slot />
             </PaperProvider>

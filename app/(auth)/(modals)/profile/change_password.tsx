@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Container } from "@/components/Container";
 import { StatusBar } from "@/components/StatusBar";
 import { Input } from "@/components/form/input";
@@ -31,39 +31,41 @@ export default function ChangePassword() {
         <Container>
             <StatusBar color="dark"/>
 
-            <View className="px-6 py-8 flex-1 flex justify-center items-center gap-y-5">
-                <Input
-                    label="Senha atual"
-                    value={currentPassword}
-                    onChangeText={setCurrentPassword}
-                    secureTextEntry
-                    errorMessage={validationErrors.currentPassword?.[0]}
-                />
+            <ScrollView>
+                <View className="p-default flex-1 flex justify-center items-center gap-y-5">
+                    <Input
+                        label="Senha atual"
+                        value={currentPassword}
+                        onChangeText={setCurrentPassword}
+                        secureTextEntry
+                        errorMessage={validationErrors.currentPassword?.[0]}
+                    />
 
-                <Input
-                    label="Nova senha"
-                    value={newPassword}
-                    onChangeText={setNewPassword}
-                    secureTextEntry
-                    errorMessage={validationErrors.newPassword?.[0]}
-                />
+                    <Input
+                        label="Nova senha"
+                        value={newPassword}
+                        onChangeText={setNewPassword}
+                        secureTextEntry
+                        errorMessage={validationErrors.newPassword?.[0]}
+                    />
 
-                <Input
-                    label="Confirmar nova senha"
-                    value={confirmNewPassword}
-                    onChangeText={setConfirmNewPassword}
-                    secureTextEntry
-                    errorMessage={validationErrors.newPassword_confirmation?.[0]}
-                />
+                    <Input
+                        label="Confirmar nova senha"
+                        value={confirmNewPassword}
+                        onChangeText={setConfirmNewPassword}
+                        secureTextEntry
+                        errorMessage={validationErrors.newPassword_confirmation?.[0]}
+                    />
 
-                <Button
-                    label="Salvar"
-                    className="mt-6"
-                    onPress={handleChangePassword}
-                    isLoading={isLoading}
-                    disabled={!currentPassword || !newPassword || !confirmNewPassword}
-                />
-            </View>
+                    <Button
+                        label="Salvar"
+                        className="mt-6"
+                        onPress={handleChangePassword}
+                        isLoading={isLoading}
+                        disabled={!currentPassword || !newPassword || !confirmNewPassword}
+                    />
+                </View>
+            </ScrollView>
         </Container>
     );
 }

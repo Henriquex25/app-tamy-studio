@@ -85,7 +85,10 @@ export default function Profile() {
 
                 {/* Botões */}
                 <View className="mt-8 px-6">
-                    <Button icon="person-outline" label="Meu cadastro" onPress={logout}/>
+
+                    <Link href="/(auth)/(modals)/profile/my_record" asChild>
+                        <Button icon="person-outline" label="Meu cadastro"/>
+                    </Link>
 
                     <Link href="/(auth)/(modals)/profile/change_password" asChild>
                         <Button icon="key-outline" label="Trocar minha senha"/>

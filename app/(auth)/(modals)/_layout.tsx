@@ -16,7 +16,6 @@ export default function ModalsLayout() {
                 name="notification/index"
                 options={{
                     title: "Notificações",
-                    headerTitleAlign: "center",
                 }}
             />
 
@@ -24,7 +23,6 @@ export default function ModalsLayout() {
                 name="profile/index"
                 options={{
                     title: "Perfil",
-                    headerTitleAlign: "center",
                 }}
             />
 
@@ -32,7 +30,13 @@ export default function ModalsLayout() {
                 name="profile/change_password"
                 options={{
                     title: "Trocar senha",
-                    headerTitleAlign: "center",
+                }}
+            />
+
+            <Stack.Screen
+                name="profile/my_record"
+                options={{
+                    title: "Meu cadastro",
                 }}
             />
         </Stack>

@@ -27,3 +27,13 @@ export type ValidationErrorsChangePassword = {
     newPassword?: string[];
     newPassword_confirmation?: string[];
 };
+
+export type UserChangeData = {
+    name: string;
+    cell_phone: string;
+}
+
+export type ValidationErrorsChangeData = {
+    name?: string[];
+    cell_phone?: string[];
+}
