@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { StatusBar } from "@/components/StatusBar";
 import Header from "@/components/Header";
@@ -8,25 +8,19 @@ import { Container } from "@/components/Container";
 import { useLocalSearchParams } from "expo-router";
 import Toast, { ToastShowParams } from "react-native-toast-message";
 import { useUser } from "@/contexts/UserContext";
+import { AppointmentType } from "@/types/Appointment";
+import api from "@/services/api";
+import { AxiosResponse } from "axios";
+import * as SecureStore from "expo-secure-store";
 
-interface IScheduledService {
-    id: string;
-    name: string;
-    description: string;
-    date: string;
-    time: string;
-    service: string;
-    price: number;
-}
 
 export default function HomeScreen() {
+    const skipGetAppointments = useRef(false);
+    const apiEndpoint = '/appointments';
     const {user} = useUser();
-    const [scheduledServices, setScheduledServices] = useState<IScheduledService[]>([]);
+    const [appointments, setAppointment] = useState<AppointmentType[]>([]);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     let {toast} = useLocalSearchParams<{ toast?: string }>();
-
-    function getFirstName(): string {
-        return user?.name?.split(" ")[0] || "";
-    }
 
     useEffect(() => {
         const toastObj: ToastShowParams = JSON.parse(toast || "{}");
@@ -34,43 +28,58 @@ export default function HomeScreen() {
             Toast.show(toastObj);
             toast = undefined;
         }
-
-        setScheduledServices([
-            {
-                id: "1",
-                name: "Alongamento Cílios",
-                description: "Descrição do Serviço 1",
-                date: "01/01/2023",
-                time: "10:00",
-                service: "Serviço 1",
-                price: 10000,
-            },
-            {
-                id: "2",
-                name: "Manicure",
-                description: "Descrição do Serviço 2",
-                date: "01/01/2023",
-                time: "10:00",
-                service: "Serviço 1",
-                price: 20000,
-            },
-        ]);
     }, []);
+
+    useEffect(() => {
+        if (skipGetAppointments.current) {
+            skipGetAppointments.current = false;
+            return;
+        }
+
+        getAppointmentsApi();
+    }, [currentPage]);
+
+    function getFirstName(): string {
+        return user?.name?.split(" ")[0] || "";
+    }
+
+    async function getAppointmentsApi(): Promise<void> {
+        try {
+            const response: AxiosResponse = await api.post(apiEndpoint, {
+                page: currentPage
+            })
+
+            if (response.status === 200) {
+                if (currentPage !== response.data.page) {
+                    skipGetAppointments.current = true;
+                    setCurrentPage(response.data.page);
+                }
+
+                setAppointment(response.data.data);
+
+                console.log(appointments)
+            }
+
+            console.log(response.data)
+        } catch (error: any) {
+            console.log(error)
+        }
+    }
 
     return (
         <View className="flex-1">
             <StatusBar/>
 
             <Container>
-                <Header label={`Ola, ${getFirstName()}`}/>
+                <Header label={`Olá, ${getFirstName()}`}/>
 
                 <Text className="mt-8 text-center font-bold text-2xl text-primary-500">Meus agendamentos</Text>
 
                 {/* Lista de agendamentos */}
                 <View className="mt-10">
                     <FlatList
-                        data={scheduledServices}
-                        keyExtractor={(item) => item.id}
+                        data={appointments}
+                        keyExtractor={(item: AppointmentType): string => item.id.toString()}
                         renderItem={({item}) => (
                             <View
                                 className="w-[89%] rounded-xl mx-auto flex flex-row bg-gray-50 overflow-hidden mb-5"
@@ -87,9 +96,11 @@ export default function HomeScreen() {
                                     {/* Título e data */}
                                     <View className="w-7/12">
                                         <Text className="font-bold text-pink-500 text-xl mb-2" numberOfLines={1}>
-                                            {item.name}
+                                            {item.service.name}
                                         </Text>
-                                        <Text className="text-gray-400 mx-auto">{item.date + " - " + item.time}</Text>
+                                        <Text className="text-gray-500 mx-auto font-semibold">
+                                            {`${item.scheduled_at.substring(0, 10).trim()} - ${item.scheduled_at.substring(10).trim()}`}
+                                        </Text>
                                     </View>
 
                                     {/* Preço e tempo restante */}
@@ -98,13 +109,11 @@ export default function HomeScreen() {
                                         <View className="flex flex-row pr-1.5 w-full justify-end gap-x-1">
                                             <Text className="pt-1.5 font-semibold text-gray-400 text-[0.9rem]">R$</Text>
                                             <Text className="text-center text-lg font-bold text-gray-400">
-                                                {(item.price / 100).toLocaleString("pt-BR", {
-                                                    minimumFractionDigits: 2,
-                                                })}
+                                                {item.service.formated_price.substring(3).trim()}
                                             </Text>
                                         </View>
 
-                                        {/* Tempo restante */}
+                                        {/* Tempo de duração */}
                                         <View className="w-full flex flex-row justify-center items-center mt-1 gap-x-1">
                                             <Ionicons
                                                 name="time-outline"
@@ -112,7 +121,7 @@ export default function HomeScreen() {
                                                 color={themeColors.primary[400]}
                                                 style={{marginTop: 2, opacity: 0.7}}
                                             />
-                                            <Text className="text-primary-400/70">30 min</Text>
+                                            <Text className="text-primary-400/70">{item.service.duration_time}</Text>
                                         </View>
                                     </View>
 

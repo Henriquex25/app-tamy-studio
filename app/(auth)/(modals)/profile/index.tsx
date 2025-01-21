@@ -153,7 +153,7 @@ export default function Profile() {
                 </View>
 
                 {/* Nome */}
-                <Text className="text-center text-2xl font-bold text-primary-500">{user?.name}</Text>
+                <Text className="text-center text-2xl font-bold text-primary-500" numberOfLines={1}>{user?.name}</Text>
 
                 {/* Botões */}
                 <View className="mt-8 px-6">

@@ -14,7 +14,7 @@ interface ValidationErrors {
 
 export default function LoginScreen() {
     const { login, isLoading, isAuthenticated } = useAuth();
-    const [email, setEmail] = useState("test@example.com");
+    const [email, setEmail] = useState("user@example.com");
     const [password, setPassword] = useState("password");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
 
