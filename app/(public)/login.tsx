@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/Button";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 
 interface ValidationErrors {
     email?: string[];
@@ -14,7 +13,7 @@ interface ValidationErrors {
 }
 
 export default function LoginScreen() {
-    const { login, isLoading, googleLogin, isAuthenticated } = useAuth();
+    const { login, isLoading, isAuthenticated } = useAuth();
     const [email, setEmail] = useState("test@example.com");
     const [password, setPassword] = useState("password");
     const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
@@ -79,14 +78,13 @@ export default function LoginScreen() {
                 <Button color="primary" onPress={handleLogin} label="Entrar" isLoading={isLoading} />
 
                 {/* Entrar com Google */}
-                <Button
+                {/* <Button
                     color="transparent"
                     label="Entrar com o Google"
                     labelColor="text-primary-500"
                     className="mt-5"
                     prepend={() => <Ionicons name="logo-google" size={22} color="black" style={{ marginRight: 12 }} />}
-                    onPress={googleLogin}
-                />
+                /> */}
 
                 {/* Cadastrar */}
                 <Link href="/register" asChild>

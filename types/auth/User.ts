@@ -1,8 +1,9 @@
 export type UserType = {
-    id: number,
+    id: number;
     google_id?: string;
     name: string;
     avatar?: string;
+    avatar_url?: string;
     email: string;
     cell_phone: string;
 };
@@ -31,9 +32,9 @@ export type ValidationErrorsChangePassword = {
 export type UserChangeData = {
     name: string;
     cell_phone: string;
-}
+};
 
 export type ValidationErrorsChangeData = {
     name?: string[];
     cell_phone?: string[];
-}
+};
