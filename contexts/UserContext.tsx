@@ -70,7 +70,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             });
 
             if (isSuccessfulResponse(response)) {
-                router.replace({
+                router.dismissTo({
                     pathname: "/(auth)/(modals)/profile",
                     params: {
                         toast: JSON.stringify({
@@ -100,7 +100,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (isSuccessfulResponse(response)) {
                 setUser(response.data.user);
 
-                router.replace({
+                router.dismissTo({
                     pathname: "/(auth)/(modals)/profile",
                     params: {
                         toast: JSON.stringify({

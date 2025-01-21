@@ -23,6 +23,13 @@ export default function PublicLayout() {
                     title: "Cadastrar",
                 }}
             />
+
+            <Stack.Screen
+                name="forgot-password"
+                options={{
+                    title: "Esqueci minha senha",
+                }}
+            />
         </Stack>
     );
 }
