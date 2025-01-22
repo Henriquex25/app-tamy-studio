@@ -1,8 +1,6 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Slot, useRouter, useSegments } from "expo-router";
-import { AuthProvider } from "@/contexts/AuthContext";
-import React from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import "../styles/global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";

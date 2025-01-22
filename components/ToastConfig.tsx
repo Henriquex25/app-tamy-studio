@@ -1,7 +1,5 @@
-import { View, Text } from "react-native";
 import { BaseToast, ErrorToast, InfoToast } from "react-native-toast-message";
 
-// const successColor = "#10b981";
 const successColor = "#ec4899";
 const errorColor = "#ef4444";
 const infoColor = "#06b6d4";

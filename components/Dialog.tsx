@@ -3,19 +3,19 @@ import { ActivityIndicator, Modal, Pressable, Text, TouchableOpacity, View } fro
 
 interface Props extends React.ComponentProps<typeof Modal> {
     type?: "bottom" | "classic";
-    visible?: boolean;
+    visible: boolean;
     label?: string;
     confirmButtonLabel?: string;
     onConfirm?: () => void;
-    isLoading?: boolean;
+    loading?: boolean;
     cancelButtonLabel?: string;
     onCancel?: () => void;
-    hide: (visible: boolean) => void;
+    onClose: (visible: boolean) => void;
 }
 
 export function Dialog({ confirmButtonLabel = "Sim", cancelButtonLabel = "Não", type = "classic", ...props }: Props) {
     function confirm() {
-        if (props.isLoading) return;
+        if (props.loading) return;
 
         if (props.onConfirm) {
             props.onConfirm();
@@ -23,33 +23,33 @@ export function Dialog({ confirmButtonLabel = "Sim", cancelButtonLabel = "Não",
     }
 
     function cancel() {
-        if (props.isLoading) return;
+        if (props.loading) return;
 
         if (props.onCancel) {
             props.onCancel();
         }
 
-        props.hide(false);
+        props.onClose(false);
     }
 
     return (
         <Modal animationType="slide" transparent={true} visible={props.visible} onRequestClose={cancel}>
             <Pressable
                 className={`flex-1 bg-black/20 flex items-center w-screen fixed ${
-                    type === "classic" ? "justify-center" : "justify-end"
+                    type === "classic" ? "justify-center px-4" : "justify-end"
                 }`}
                 onPress={cancel}
             >
                 {type === "classic" && (
-                    <View className="bg-primary-200 mx-auto w-11/12 rounded-lg px-4 py-5">
-                        <Text className="text-center text-lg mt-2">{props.label}</Text>
+                    <View className="bg-primary-200 mx-auto w-11/12 rounded-3xl px-4 py-6">
+                        <Text className="text-center text-lg font-semibold text-gray-600">{props.label}</Text>
 
-                        <View className="mt-8 self-end flex flex-row items-center justify-center gap-x-5">
+                        <View className="mt-9 self-end flex flex-row items-center justify-center gap-x-5">
                             {/* Cancel Button */}
                             <TouchableOpacity
                                 className="h-14 bg-transparent px-6 rounded-lg flex justify-center items-center self-end"
                                 activeOpacity={0.75}
-                                disabled={props.isLoading}
+                                disabled={props.loading}
                                 onPress={cancel}
                             >
                                 <Text className="text-gray-700 font-semibold">{cancelButtonLabel}</Text>
@@ -60,12 +60,12 @@ export function Dialog({ confirmButtonLabel = "Sim", cancelButtonLabel = "Não",
                                 className="h-14 bg-primary-400 px-6 rounded-lg flex justify-center items-center"
                                 activeOpacity={0.75}
                                 onPress={confirm}
-                                disabled={props.isLoading}
+                                disabled={props.loading}
                             >
-                                {!props.isLoading && (
+                                {!props.loading && (
                                     <Text className="text-white font-semibold">{confirmButtonLabel}</Text>
                                 )}
-                                {props.isLoading && <ActivityIndicator size="large" color="white" />}
+                                {props.loading && <ActivityIndicator size="large" color="white" />}
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -79,18 +79,18 @@ export function Dialog({ confirmButtonLabel = "Sim", cancelButtonLabel = "Não",
                             className="h-16 bg-primary-400 px-5 rounded-xl flex justify-center items-center w-full"
                             activeOpacity={0.75}
                             onPress={confirm}
-                            disabled={props.isLoading}
+                            disabled={props.loading}
                         >
-                            {!props.isLoading && (
+                            {!props.loading && (
                                 <Text className="text-white font-semibold text-xl">{confirmButtonLabel}</Text>
                             )}
-                            {props.isLoading && <ActivityIndicator size="large" color="white" />}
+                            {props.loading && <ActivityIndicator size="large" color="white" />}
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             className="h-16 bg-transparent border border-primary-400 text-primary-400 px-5 rounded-xl flex justify-center items-center w-full"
                             activeOpacity={0.75}
-                            disabled={props.isLoading}
+                            disabled={props.loading}
                             onPress={cancel}
                         >
                             <Text className="text-white font-semibold text-xl">{cancelButtonLabel}</Text>

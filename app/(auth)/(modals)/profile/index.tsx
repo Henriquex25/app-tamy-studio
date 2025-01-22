@@ -88,8 +88,8 @@ export default function Profile() {
                     logout();
                 }}
                 visible={showConfirmLogoutModal}
-                hide={setShowConfirmLogoutModal}
-                isLoading={isLoading}
+                onClose={setShowConfirmLogoutModal}
+                loading={isLoading}
             />
         );
     }
@@ -103,8 +103,8 @@ export default function Profile() {
                     deleteAvatar();
                 }}
                 visible={showRemoveAvatarModal}
-                hide={setShowRemoveAvatarModal}
-                isLoading={isLoading}
+                onClose={setShowRemoveAvatarModal}
+                loading={isLoading}
             />
         );
     }
