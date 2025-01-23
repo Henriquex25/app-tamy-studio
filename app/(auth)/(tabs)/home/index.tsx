@@ -21,8 +21,10 @@ export default function HomeScreen() {
     const { user } = useUser();
     let { toast } = useLocalSearchParams<{ toast?: string }>();
     const [appointments, setAppointment] = useState<AppointmentType[]>([]);
+    const [hasMoreAppointments, setHasMoreAppointments] = useState<boolean>(false);
     const [loadingAppointments, setLoadingAppointments] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [loadingMoreAppointments, setLoadingMoreAppointments] = useState<boolean>(false);
     const [appointmentMenu, setAppointmentMenu] = useState<{ [key: string]: boolean }>({});
     const [menuActionLoading, setMenuActionLoading] = useState<{ [key: string]: boolean }>({});
     const [showAppointmentCancellationConfirmationModal, setShowAppointmentCancellationConfirmationModal] = useState<boolean>(false);
@@ -35,38 +37,46 @@ export default function HomeScreen() {
             Toast.show(toastObj);
             toast = undefined;
         }
-    }, []);
 
-    useEffect(() => {
         if (skipGetAppointments.current) {
             skipGetAppointments.current = false;
             return;
         }
 
-        getAppointmentsApi();
-    }, [currentPage]);
+        handleGetAppointments();
+    }, []);
 
-    async function getAppointmentsApi(skipLoading: boolean = false): Promise<void> {
+    async function getAppointmentsApi(page: number = 1): Promise<AxiosResponse> {
+        return await api.get(apiEndpoint, {
+            params: {
+                page: page
+            }
+        })
+    }
+
+    async function handleGetAppointments(skipLoading: boolean = false): Promise<void> {
         try {
 
             if (!skipLoading) {
                 setLoadingAppointments(true);
             }
 
-            const response: AxiosResponse = await api.get(apiEndpoint, {
-                params: {
-                    page: currentPage
-                }
-            })
+            const response: AxiosResponse = await getAppointmentsApi();
 
             if (response.status === 200) {
                 if (currentPage !== response.data.page) {
                     skipGetAppointments.current = true;
-                    setCurrentPage(response.data.page);
+                    setCurrentPage(response.data.meta.current_page);
                 }
 
-                setAppointment(response.data.data);
-                console.log(response.data)
+                setHasMoreAppointments(!!response.data.links.next);
+
+                if (response.data.meta.current_page === 1) {
+                    setAppointment([...response.data.data]);
+                    return;
+                }
+
+                setAppointment([...appointments, ...response.data.data]);
             }
 
         } catch (error: any) {
@@ -82,21 +92,49 @@ export default function HomeScreen() {
         }
     }
 
+    async function loadMoreAppointments(): Promise<void> {
+        if (loadingMoreAppointments) return;
+
+        setLoadingMoreAppointments(true);
+
+        if (hasMoreAppointments) {
+            const page = currentPage + 1;
+            setCurrentPage(page);
+            const result: AxiosResponse = await getAppointmentsApi(page);
+
+            if (result.status === 200) {
+                setHasMoreAppointments(!!result.data.links.next);
+
+                const resultAppointments: AppointmentType[] = result.data.data.filter((appointment: AppointmentType) => {
+                    return !appointments.find((a: AppointmentType) => a.id === appointment.id);
+                });
+
+                setAppointment([...appointments, ...resultAppointments]);
+            }
+        }
+
+        setLoadingMoreAppointments(false);
+    }
+
     async function onRefresh(): Promise<void> {
         setRefreshing(true);
-        await getAppointmentsApi(true);
+        await handleGetAppointments(true);
         setRefreshing(false);
     }
 
     async function cancelAppointment(id: string | number): Promise<void> {
-        try {
-            setMenuActionLoadingState(id, true)
+        if (menuActionLoading[id] || refreshing) return;
 
+        setMenuActionLoadingState(id, true)
+
+        try {
             const response: AxiosResponse = await api.delete(`/appointments/${id}`);
 
             if (response.status === 200) {
 
-                getAppointmentsApi();
+                const filteredAppointments: AppointmentType[] = appointments.filter((appointment: AppointmentType): boolean => appointment.id !== id)
+
+                setAppointment(filteredAppointments);
 
                 Toast.show({
                     type: "success",
@@ -113,12 +151,8 @@ export default function HomeScreen() {
 
             console.log("Erro ao cancelar agendamento:", error);
         } finally {
+            setAppointmentMenu({});
             setMenuActionLoadingState(id, false)
-            const allAppointmentMenu = { ...appointmentMenu };
-
-            delete allAppointmentMenu[id];
-
-            setAppointmentMenu(allAppointmentMenu);
             setAppointmentIdToCancel(null)
             setShowAppointmentCancellationConfirmationModal(false);
         }
@@ -180,7 +214,7 @@ export default function HomeScreen() {
                 <Text className="mt-7 text-center font-bold text-2xl text-primary-500">Meus agendamentos</Text>
 
                 {/* Lista de agendamentos */}
-                <View className="mt-1.5 pb-12 py-3">
+                <View className="mt-1.5 mb-[8rem] py-3">
                     { loadingAppointments ? (
                         <ActivityIndicator color={themeColors.primary[400]} size="large" />
                     ) : (
@@ -264,13 +298,11 @@ export default function HomeScreen() {
                                 />
                             }
                             ListEmptyComponent={<Text className="text-center text-gray-600">Nenhum agendamento encontrado.</Text>}
-                            onEndReached={() => {
-                                if (refreshing || appointments.length <= 0) return;
-
-                                setCurrentPage(currentPage + 1);
-                            }}
-                            onEndReachedThreshold={0.05}
-                            ListFooterComponent={<Text>Teste</Text>}
+                            onEndReached={loadMoreAppointments}
+                            onEndReachedThreshold={0.1}
+                            ListFooterComponent={loadingMoreAppointments ? (
+                                <ActivityIndicator color={themeColors.primary[400]} size="large" style={{paddingBottom: 20}} />
+                            ) : null}
                         />
                     )}
                 </View>

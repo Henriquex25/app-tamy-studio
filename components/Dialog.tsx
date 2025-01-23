@@ -35,8 +35,8 @@ export function Dialog({ confirmButtonLabel = "Sim", cancelButtonLabel = "Não",
     return (
         <Modal animationType="slide" transparent={true} visible={props.visible} onRequestClose={cancel}>
             <Pressable
-                className={`flex-1 bg-black/20 flex items-center w-screen fixed ${
-                    type === "classic" ? "justify-center px-4" : "justify-end"
+                className={`flex-1 flex items-center w-screen fixed ${
+                    type === "classic" ? "justify-center px-4 bg-black/60" : "justify-end bg-black/20"
                 }`}
                 onPress={cancel}
             >
