@@ -12,3 +12,8 @@ export type AppointmentType = {
     service: ServicesType;
     user: UserType;
 };
+
+export type CreateAppointmentType = {
+    scheduled_at: string;
+    service_id: number;
+}

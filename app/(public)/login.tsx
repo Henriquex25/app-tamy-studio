@@ -56,9 +56,9 @@ export default function LoginScreen() {
                 {/* Password */}
                 <View className="mt-5">
                     <Input
+                        type="password"
                         label="Senha"
                         value={password}
-                        secureTextEntry
                         onChangeText={setPassword}
                         errorMessage={validationErrors.password?.[0]}
                     />

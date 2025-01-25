@@ -140,8 +140,8 @@ export default function Register() {
 
                     <View>
                         <Input
+                            type="password"
                             label="Senha"
-                            secureTextEntry
                             value={payload.password}
                             onChangeText={(value) => setPayload({ ...payload, password: value })}
                             errorMessage={validationErrors.password?.[0]}
@@ -150,8 +150,8 @@ export default function Register() {
 
                     <View>
                         <Input
+                            type="password"
                             label="Confirme a senha"
-                            secureTextEntry
                             value={payload.password_confirmation}
                             onChangeText={(value) => setPayload({ ...payload, password_confirmation: value })}
                             errorMessage={validationErrors.password_confirmation?.[0]}

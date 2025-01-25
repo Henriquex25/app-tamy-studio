@@ -8,7 +8,7 @@ interface ButtonProps extends React.ComponentProps<typeof TouchableOpacity> {
     disabled?: boolean;
     isLoading?: boolean;
     className?: string;
-    color?: "primary" | "secondary" | "danger" | "transparent" | "custom";
+    color?: "primary" | "primary-dark" | "secondary" | "danger" | "transparent" | "custom";
     labelColor?: string;
     prepend?: () => React.ReactNode;
     append?: () => React.ReactNode;
@@ -22,7 +22,8 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
 
         const colors = {
             primary: "bg-pink-400",
-            secondary: "bg-gray-500",
+            "primary-dark": "bg-pink-500",
+            secondary: "bg-gray-400",
             danger: "bg-red-500",
             transparent: "bg-transparent",
         };
@@ -37,6 +38,7 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
 
         const colors = {
             primary: "text-gray-800",
+            "primary-dark": "text-gray-800",
             secondary: "text-white",
             danger: "text-white",
             transparent: "text-gray-800",
@@ -52,6 +54,7 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
 
         const colors = {
             primary: "#1f2937",
+            "primary-dark": "#1f2937",
             secondary: "#fff",
             danger: "#fff",
             transparent: themeColors.primary[400],
@@ -64,9 +67,9 @@ const Button = forwardRef<View, ButtonProps>((props, ref) => {
         <TouchableOpacity
             ref={ref}
             {...props}
-            className={`w-full rounded-3xl disabled:opacity-60 ${props.isLoading ? "pointer-events-none py-2" : "py-3.5"} ${
-                props.className ?? ""
-            } ${getBackgroundColor()}`}
+            className={`w-full rounded-3xl disabled:opacity-60 ${
+                props.isLoading ? "pointer-events-none py-2" : "py-4"
+            } ${props.className ?? ""} ${getBackgroundColor()}`}
             activeOpacity={props.activeOpacity ?? 0.7}
             disabled={props.disabled || props.isLoading}
         >

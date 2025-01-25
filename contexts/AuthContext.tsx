@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { AxiosError, AxiosResponse } from "axios";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
-import { UserRegistrationType, UserType } from "@/types/auth/User";
+import { UserRegistrationType } from "@/types/auth/User";
 import { useUser } from "./UserContext";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (!token) return;
 
-            const response  = await api.post("/auth/check");
+            const response = await api.post("/auth/check");
 
             if (response.status === 200 && response.data.user) {
                 setUser(response.data.user);

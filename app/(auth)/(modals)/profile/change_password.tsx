@@ -34,26 +34,26 @@ export default function ChangePassword() {
             <ScrollView>
                 <View className="p-default flex-1 flex justify-center items-center gap-y-5">
                     <Input
+                        type="password"
                         label="Senha atual"
                         value={currentPassword}
                         onChangeText={setCurrentPassword}
-                        secureTextEntry
                         errorMessage={validationErrors.currentPassword?.[0]}
                     />
 
                     <Input
+                        type="password"
                         label="Nova senha"
                         value={newPassword}
                         onChangeText={setNewPassword}
-                        secureTextEntry
                         errorMessage={validationErrors.newPassword?.[0]}
                     />
 
                     <Input
+                        type="password"
                         label="Confirmar nova senha"
                         value={confirmNewPassword}
                         onChangeText={setConfirmNewPassword}
-                        secureTextEntry
                         errorMessage={validationErrors.newPassword_confirmation?.[0]}
                     />
 
