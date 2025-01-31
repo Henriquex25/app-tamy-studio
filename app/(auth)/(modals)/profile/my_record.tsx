@@ -9,8 +9,8 @@ import { Input } from "@/components/form/input";
 import { useUser } from "@/contexts/UserContext";
 import { UserChangeData, ValidationErrorsChangeData } from "@/types/auth/User";
 import Button from "@/components/Button";
+import { Info } from "@/components/Info";
 
-interface SectionProps extends ViewProps {}
 
 export default function MyRecord() {
     const { user, isLoading, changeUserData } = useUser();
@@ -32,16 +32,6 @@ export default function MyRecord() {
         }
     }
 
-    function Section(props: SectionProps): ReactElement {
-        return (
-            <View
-                className="border border-primary-600/40 rounded-xl p-4 flex flex-row gap-x-6 items-center justify-center mb-4 w-full"
-            >
-                {props.children}
-            </View>
-        )
-    }
-
     function getCellPhoneMasked(): string {
         if (!newUserData.cell_phone) return "";
 
@@ -54,12 +44,12 @@ export default function MyRecord() {
 
             <ScrollView>
                 <View className="p-default flex items-center justify-center">
-                    <Section>
+                    <Info>
                         <Ionicons name="alert-circle" size={37} color={themeColors.primary[500]}/>
-                        <Text className="text-primary-600">Confira seus dados, edite o que for necessário e conclua
+                        <Text className="text-primary-600 ml-5">Confira seus dados, edite o que for necessário e conclua
                             atualização.
                         </Text>
-                    </Section>
+                    </Info>
 
                     <View className="mt-5 w-full mb-5 gap-y-6">
                         <Input

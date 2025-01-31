@@ -18,6 +18,20 @@ export default function NewScheduleLayout() {
                     title: "Dia e horário",
                 }}
             />
+
+            <Stack.Screen
+                name="appointment_checkout"
+                options={{
+                    title: "Resumo do agendamento",
+                }}
+            />
+
+            <Stack.Screen
+                name="scheduled_successfully"
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack>
     );
 }

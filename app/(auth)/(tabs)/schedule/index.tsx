@@ -12,6 +12,7 @@ import api from "@/services/api";
 import Toast from "react-native-toast-message";
 import { ServiceType } from "@/types/Service";
 import { router } from "expo-router";
+import { LoadingIndicator } from "@/components/LoadingIndicator";
 
 export default function Schedule() {
     const { user } = useUser();
@@ -57,9 +58,14 @@ export default function Schedule() {
         return user?.name?.split(" ")[0] ?? "";
     }
 
-    const LoadingIndicator = (): ReactElement => {
-        return <ActivityIndicator color={themeColors.primary[400]} size="large" style={{ paddingBottom: 20 }} />;
-    };
+    function goToNextScreen(item: ServiceType): void {
+        router.push({
+            pathname: "/(auth)/(new_schedule)/date_time",
+            params: item,
+        });
+
+        setQuery("");
+    }
 
     return (
         <Container>
@@ -104,12 +110,7 @@ export default function Schedule() {
                                     shadowRadius: 5,
                                     elevation: 5,
                                 }}
-                                onPress={() => {
-                                    router.push({
-                                        pathname: "/(auth)/(new_schedule)/date_time",
-                                        params: item,
-                                    });
-                                }}
+                                onPress={() => goToNextScreen(item)}
                             >
                                 {/* Barra colorida lateral */}
                                 <View className="h-full w-4 bg-gray-400 absolute"></View>

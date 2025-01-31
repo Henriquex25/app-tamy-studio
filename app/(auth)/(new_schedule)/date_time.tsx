@@ -1,25 +1,41 @@
 import { useEffect, useState } from "react";
-import { View, Text, FlatList, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { Container } from "@/components/Container";
 import { StatusBar } from "@/components/StatusBar";
 import { router, useLocalSearchParams } from "expo-router";
-import DateTimePicker from "@/components/form/DateTimePicker";
-import Button from "@/components/Button";
 import DateList from "@/components/DateList";
 import { Ionicons } from "@expo/vector-icons";
-import themeColors from "@/styles/themeColors";
+
 
 export default function DateTime() {
     const [dateTimePickerVisible, setDateTimePickerVisible] = useState<boolean>(false);
     const [date, setDate] = useState<Date>(new Date());
     const service = useLocalSearchParams();
 
+    function goToAppointmentCheckout(index: number) {
+        router.push({
+            pathname: "/(auth)/(new_schedule)/appointment_checkout",
+            params: {
+                service: JSON.stringify(service),
+                // date: JSON.stringify(date),
+                // time: JSON.stringify(),
+            },
+        })
+    }
+
     return (
         <Container>
             <StatusBar color="dark" />
 
             <View className="mt-3">
-                <DateList />
+                <DateList
+                    loading={false}
+                    dates={[{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }]}
+                    loadMoreDates={() => {}}
+                    onChange={(index) => {
+                        //
+                    }}
+                />
             </View>
 
             <Text className="mt-6 text-center font-bold text-2xl text-primary-500">Horários disponíveis</Text>
@@ -42,13 +58,14 @@ export default function DateTime() {
                         { time: "20:00" },
                     ]}
                     keyExtractor={() => Math.random().toString() + Date.now().toString()}
-                    renderItem={({ item }) => (
+                    renderItem={({ item, index }) => (
                         <TouchableOpacity
                             className="w-full mb-2 bg-primary-400 mt-2 h-16 rounded-xl flex flex-row items-center justify-center gap-x-3"
                             activeOpacity={0.65}
+                            onPress={() => goToAppointmentCheckout(index)}
                         >
                             <Ionicons name="time-outline" size={21} color="#374151" />
-                            <Text className="font-semibold text-lg text-gray-700 -mt-0.5">{item.time}</Text>
+                            <Text className="font-semibold text-lg text-gray-700 -mt-[0.145rem]">{item.time}</Text>
                         </TouchableOpacity>
                     )}
                     showsVerticalScrollIndicator={false}
